@@ -5,6 +5,9 @@ import com.example.notepadbackend.entity.AuthUser;
 import com.example.notepadbackend.repository.AuthUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.example.notepadbackend.dto.LoginRequest;
+import com.example.notepadbackend.security.JwtUtil;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -40,5 +43,23 @@ public class UserService {
         user.setUpdatedDateTime(LocalDateTime.now());
 
         return authUserRepository.save(user);
+    }
+
+    public String loginUser(LoginRequest request) {
+
+        AuthUser user = authUserRepository
+                .findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Invalid username"));
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        if (!encoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        user.setLastLoggedIn(LocalDateTime.now());
+        authUserRepository.save(user);
+
+        return JwtUtil.generateToken(user.getUsername());
     }
 }

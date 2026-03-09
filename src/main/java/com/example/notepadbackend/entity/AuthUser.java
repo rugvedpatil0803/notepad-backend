@@ -24,6 +24,9 @@ public class AuthUser {
     @Column(name = "updated_date_time")
     private LocalDateTime updatedDateTime;
 
+    @Column(name = "last_logged_in")
+    private LocalDateTime lastLoggedIn;
+
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
@@ -34,6 +37,4 @@ public class AuthUser {
     private String username;
 
     private String password;
-
-
 }
