@@ -8,6 +8,7 @@ import com.example.notepadbackend.repository.AuthUserRepository;
 import com.example.notepadbackend.repository.NotesRepository;
 import com.example.notepadbackend.repository.NotesUserMappingRepository;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
 
 import org.springframework.stereotype.Service;
 
@@ -59,5 +60,35 @@ public class NotesService {
         mappingRepository.save(mapping);
 
         return "Note saved successfully with id " + savedNote.getId();
+    }
+
+    public List<Map<String, Object>> get_notes_list_for_user(Long userId){
+
+        List<NotesUserMapping> mappings =
+                mappingRepository.findByUserIdAndActiveTrueAndDeletedFalse(userId);
+
+        List<Map<String, Object>> notesList = new ArrayList<>();
+
+        for (NotesUserMapping mapping : mappings) {
+
+            Notes note = mapping.getNotes();
+
+            if(note.isActive() && !note.isDeleted()) {
+
+                Map<String, Object> data = new HashMap<>();
+                data.put("id", note.getId());
+                data.put("title", note.getTitle());
+
+                notesList.add(data);
+            }
+        }
+
+        return notesList;
+    }
+
+    public Notes getNoteById(Long id) {
+
+        return notesRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Note not found"));
     }
 }

@@ -7,17 +7,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.notepadbackend.dto.LoginRequest;
 import com.example.notepadbackend.security.JwtUtil;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserService {
 
     private final AuthUserRepository authUserRepository;
+    private final NotesService notesService;
 
-    public UserService(AuthUserRepository authUserRepository) {
+    public UserService(AuthUserRepository authUserRepository, NotesService notesService) {
         this.authUserRepository = authUserRepository;
+        this.notesService = notesService;
     }
 
     public String createUser(UserCreateRequest request) {
@@ -45,7 +49,7 @@ public class UserService {
         return "User Created Successfully !";
     }
 
-    public String loginUser(LoginRequest request) {
+    public  Map<String, Object> loginUser(LoginRequest request) {
 
         AuthUser user = authUserRepository
                 .findByUsername(request.getUsername())
@@ -60,6 +64,13 @@ public class UserService {
         user.setLastLoggedIn(LocalDateTime.now());
         authUserRepository.save(user);
 
-        return JwtUtil.generateToken(user.getUsername());
+        List<Map<String, Object>> notes_list = notesService.get_notes_list_for_user(user.getId());
+        String token = JwtUtil.generateToken(user.getUsername());
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("token", "Brarer " + token);
+        response.put("notes_list", notes_list);
+
+        return response;
     }
 }

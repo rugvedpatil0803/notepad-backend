@@ -21,4 +21,15 @@ public class NotesController {
     public String createNote(@RequestBody NotesRequest request) {
         return notesService.createNote(request);
     }
+
+    @GetMapping("/{id}")
+    public Notes getNote(@PathVariable Long id) {
+        return notesService.getNoteById(id);
+    }
+
+    @PostMapping("/{id}")
+    public String updateNote(@RequestBody NotesRequest request) {
+        return notesService.createNote(request);
+    }
+
 }

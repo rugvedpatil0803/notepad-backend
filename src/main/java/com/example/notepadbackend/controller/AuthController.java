@@ -19,13 +19,13 @@ public class AuthController {
 
     // Create User API
     @PostMapping("/create_user")
-    public AuthUser createUser(@RequestBody UserCreateRequest request) {
+    public String createUser(@RequestBody UserCreateRequest request) {
         return userService.createUser(request);
     }
 
     // Login API
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest request) {
-        return userService.loginUser(request);
+        return userService.loginUser(request).toString();
     }
 }
