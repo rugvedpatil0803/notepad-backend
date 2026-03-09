@@ -10,7 +10,7 @@ import java.util.Date;
 public class JwtUtil {
 
     private static final String SECRET =
-            "mySuperSecretKeyForJwtTokenGeneration123456";
+            "iSwearIllMoveThisToEnvVarsTomorrow";
 
     private static final SecretKey KEY =
             Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));

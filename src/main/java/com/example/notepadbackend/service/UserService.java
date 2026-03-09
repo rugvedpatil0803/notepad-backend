@@ -20,7 +20,7 @@ public class UserService {
         this.authUserRepository = authUserRepository;
     }
 
-    public AuthUser createUser(UserCreateRequest request) {
+    public String createUser(UserCreateRequest request) {
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -32,17 +32,17 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setUsername(request.getUsername());
 
-        // hash password
         user.setPassword(encoder.encode(request.getPassword()));
 
         user.setActive(true);
         user.setDeleted(false);
 
-        // timestamps
         user.setCreatedDateTime(LocalDateTime.now());
         user.setUpdatedDateTime(LocalDateTime.now());
 
-        return authUserRepository.save(user);
+        authUserRepository.save(user);
+
+        return "User Created Successfully !";
     }
 
     public String loginUser(LoginRequest request) {
