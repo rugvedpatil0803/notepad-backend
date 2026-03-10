@@ -49,3 +49,27 @@ curl --location --request GET 'http://localhost:8080/api/notes/2' \
   "noteTitle": "Spring Boot Learning 2",
   "noteContent": "Understanding Controller Service Repository architecture"
 }'
+
+-----------------------------------------------------------------------------------------
+
+
+Update Note
+
+curl --location --request PUT 'http://localhost:8080/api/notes/4' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJydWd2ZWQxMjMiLCJpYXQiOjE3NzMxNDA0NDYsImV4cCI6MTc3MzE0NDA0Nn0.KOaNtr-TvBbpjrl3buz-PJ4XAn5weArjWGViTdegttI' \
+--header 'Cookie: JSESSIONID=563104AA592D7F8526B19CE502568FD4' \
+--data '{
+    "noteTitle": "Test Note 4",
+    "noteContent": "UPDATED The plumed whistling duck (Dendrocygna eytoni), is a species of bird in the whistling duck subfamily of the family Anatidae. It is resident and breeds in Australia, in a broad arc covering the northern half and most of the eastern third of the continent. There are also non-breeding and seasonally uncertain populations in New Zealand, the Solomon Islands, Indonesia and Papua New Guinea. It is a predominantly brown-coloured duck with a long neck and characteristic plumes arising from its flanks. The sexes are similar in appearance. This plumed whistling duck was photographed in Kakadu National Park, Northern Territory, Australia"
+}'
+
+-----------------------------------------------------------------------------------------
+
+Delete Note by id
+
+curl --location --request DELETE 'http://localhost:8080/api/notes/2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJydWd2ZWQxMjMiLCJpYXQiOjE3NzMxNDA0NDYsImV4cCI6MTc3MzE0NDA0Nn0.KOaNtr-TvBbpjrl3buz-PJ4XAn5weArjWGViTdegttI' \
+--header 'Cookie: JSESSIONID=563104AA592D7F8526B19CE502568FD4' \
+--data ''
