@@ -266,6 +266,146 @@ Server will start at:
 http://localhost:8080
 ```
 
+# API Usage (cURL Examples)
+
+Below are sample **cURL commands** to test the API using a terminal or tools like Postman.
+
+---
+
+# 1. Create User
+
+```bash
+curl --location 'http://localhost:8080/api/create_user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "firstName": "Mayank",
+  "lastName": "Mirajkar",
+  "birthDate": "2000-04-12",
+  "email": "mayank@gmail.com",
+  "username": "mayank123",
+  "password": "mypassword123"
+}'
+```
+
+---
+
+# 2. User Login
+
+```bash
+curl --location 'http://localhost:8080/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+  "username": "rugved123",
+  "password": "mypassword123"
+}'
+```
+
+Example response:
+
+```json
+{
+  "token": "JWT_TOKEN",
+  "notesList": [
+    {
+      "id": 2,
+      "title": "Spring Boot Learning 2"
+    }
+  ]
+}
+```
+
+Copy the **token** and use it in the Authorization header for all protected APIs.
+
+---
+
+# 3. Create Note
+
+```bash
+curl --location 'http://localhost:8080/api/notes/create_note' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer JWT_TOKEN' \
+--data '{
+  "noteTitle": "Spring Boot Learning 2",
+  "noteContent": "Understanding Controller Service Repository architecture"
+}'
+```
+
+---
+
+# 4. Get Note by ID
+
+```bash
+curl --location --request GET 'http://localhost:8080/api/notes/2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer JWT_TOKEN'
+```
+
+Example response:
+
+```json
+{
+  "noteTitle": "Spring Boot Learning 2",
+  "noteContent": "Understanding Controller Service Repository architecture"
+}
+```
+
+---
+
+# 5. Update Note
+
+```bash
+curl --location --request PUT 'http://localhost:8080/api/notes/4' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer JWT_TOKEN' \
+--data '{
+  "noteTitle": "Test Note 4",
+  "noteContent": "UPDATED note content example..."
+}'
+```
+
+---
+
+# 6. Delete Note
+
+```bash
+curl --location --request DELETE 'http://localhost:8080/api/notes/2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer JWT_TOKEN'
+```
+
+Notes are **soft deleted** using the `is_deleted` flag.
+
+---
+
+# Authentication Requirement
+
+All endpoints under:
+
+```
+/api/notes/**
+```
+
+require a valid JWT token in the header:
+
+```
+Authorization: Bearer <JWT_TOKEN>
+```
+
+---
+
+# API Summary
+
+| Method | Endpoint                 | Description             |
+| ------ | ------------------------ | ----------------------- |
+| POST   | `/api/create_user`       | Create new user         |
+| POST   | `/api/auth/login`        | Login and get JWT token |
+| POST   | `/api/notes/create_note` | Create a note           |
+| GET    | `/api/notes/{id}`        | Get note by ID          |
+| PUT    | `/api/notes/{id}`        | Update note             |
+| DELETE | `/api/notes/{id}`        | Delete note             |
+
+
+
 ---
 
 # Future Improvements
