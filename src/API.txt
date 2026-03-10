@@ -1,0 +1,51 @@
+Create User
+
+curl --location 'http://localhost:8080/api/create_user' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "firstName": "Mayank",
+  "lastName": "Mirajkar",
+  "birthDate": "2000-04-12",
+  "email": "mayank@gmail.com",
+  "username": "mayank123",
+  "password": "mypassword123"
+}'
+
+
+--------------------------------------------------------------------------------------
+
+User Log in
+
+curl --location 'http://localhost:8080/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data '{
+  "username": "rugved123",
+  "password": "mypassword123"
+}'
+
+
+-------------------------------------------------------------------------------------
+
+Note Creation
+
+
+curl --location 'http://localhost:8080/api/notes/create_note' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJydWd2ZWQxMjMiLCJpYXQiOjE3NzMwNDkwNzcsImV4cCI6MTc3MzA1MjY3N30.Rz-h6RsP-jwz5mLKXbYLfIBQldz_Zuxa8KPpUAsFTpQ' \
+--data '{
+  "noteTitle": "Spring Boot Learning 2",
+  "noteContent": "Understanding Controller Service Repository architecture"
+}'
+
+
+-----------------------------------------------------------------------------------------
+
+Get Note by id
+
+curl --location --request GET 'http://localhost:8080/api/notes/2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJydWd2ZWQxMjMiLCJpYXQiOjE3NzMxMzU4ODUsImV4cCI6MTc3MzEzOTQ4NX0.dyKXsSZEID4-Sjrz68ldK2ZsCCkFWZZUjFbVCW4KwZk' \
+--data '{
+  "noteTitle": "Spring Boot Learning 2",
+  "noteContent": "Understanding Controller Service Repository architecture"
+}'

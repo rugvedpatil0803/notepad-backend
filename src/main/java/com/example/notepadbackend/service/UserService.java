@@ -1,6 +1,7 @@
 package com.example.notepadbackend.service;
 
 import com.example.notepadbackend.dto.UserCreateRequest;
+import com.example.notepadbackend.dto.LoginResponse;
 import com.example.notepadbackend.entity.AuthUser;
 import com.example.notepadbackend.repository.AuthUserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -49,7 +50,7 @@ public class UserService {
         return "User Created Successfully !";
     }
 
-    public  Map<String, Object> loginUser(LoginRequest request) {
+    public LoginResponse loginUser(LoginRequest request) {
 
         AuthUser user = authUserRepository
                 .findByUsername(request.getUsername())
@@ -64,13 +65,11 @@ public class UserService {
         user.setLastLoggedIn(LocalDateTime.now());
         authUserRepository.save(user);
 
-        List<Map<String, Object>> notes_list = notesService.get_notes_list_for_user(user.getId());
+        List<Map<String, Object>> notesList =
+                notesService.getNotesListForUser(user.getId());
+
         String token = JwtUtil.generateToken(user.getUsername());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", "Brarer " + token);
-        response.put("notes_list", notes_list);
-
-        return response;
+        return new LoginResponse(token, notesList);
     }
 }

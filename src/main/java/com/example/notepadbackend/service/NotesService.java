@@ -1,18 +1,19 @@
 package com.example.notepadbackend.service;
 
 import com.example.notepadbackend.dto.NotesRequest;
+import com.example.notepadbackend.dto.NoteResponse;
 import com.example.notepadbackend.entity.AuthUser;
 import com.example.notepadbackend.entity.Notes;
 import com.example.notepadbackend.entity.NotesUserMapping;
 import com.example.notepadbackend.repository.AuthUserRepository;
 import com.example.notepadbackend.repository.NotesRepository;
 import com.example.notepadbackend.repository.NotesUserMappingRepository;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.*;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class NotesService {
@@ -31,14 +32,17 @@ public class NotesService {
         this.authUserRepository = authUserRepository;
     }
 
+    // Create Note
     @Transactional
-    public String createNote(NotesRequest request){
+    public String createNote(NotesRequest request, String username) {
 
-        //Note Creation
+        AuthUser user = authUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         Notes note = new Notes();
         note.setTitle(request.getNoteTitle());
         note.setDescription(request.getNoteContent());
-
         note.setActive(true);
         note.setDeleted(false);
         note.setCreatedDateTime(LocalDateTime.now());
@@ -46,12 +50,9 @@ public class NotesService {
 
         Notes savedNote = notesRepository.save(note);
 
-        // Mapping Of User and Note
-        AuthUser user = authUserRepository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
         NotesUserMapping mapping = new NotesUserMapping();
         mapping.setUser(user);
         mapping.setNotes(savedNote);
-
         mapping.setActive(true);
         mapping.setDeleted(false);
         mapping.setCreatedDateTime(LocalDateTime.now());
@@ -62,10 +63,56 @@ public class NotesService {
         return "Note saved successfully with id " + savedNote.getId();
     }
 
-    public List<Map<String, Object>> get_notes_list_for_user(Long userId){
+    // Update Note
+    @Transactional
+    public String updateNote(Long id, NotesRequest request, String username) {
+
+        AuthUser user = authUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        NotesUserMapping mapping = mappingRepository
+                .findByUser_IdAndNotes_IdAndActiveTrueAndDeletedFalse(user.getId(), id)
+                .orElseThrow(() -> new RuntimeException("You are not authorized to update this note"));
+
+        Notes note = mapping.getNotes();
+
+        note.setTitle(request.getNoteTitle());
+        note.setDescription(request.getNoteContent());
+        note.setUpdatedDateTime(LocalDateTime.now());
+
+        notesRepository.save(note);
+
+        return "Note updated successfully with id " + note.getId();
+    }
+
+    // Delete Note (Soft Delete)
+    @Transactional
+    public String deleteNote(Long id, String username) {
+
+        AuthUser user = authUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        NotesUserMapping mapping = mappingRepository
+                .findByUser_IdAndNotes_IdAndActiveTrueAndDeletedFalse(user.getId(), id)
+                .orElseThrow(() -> new RuntimeException("You are not authorized to delete this note"));
+
+        Notes note = mapping.getNotes();
+
+        note.setDeleted(true);
+        note.setUpdatedDateTime(LocalDateTime.now());
+
+        notesRepository.save(note);
+
+        return "Note deleted successfully with id " + id;
+    }
+
+    // Get all notes for logged user
+    public List<Map<String, Object>> getNotesListForUser(Long userId) {
 
         List<NotesUserMapping> mappings =
-                mappingRepository.findByUserIdAndActiveTrueAndDeletedFalse(userId);
+                mappingRepository.findByUser_IdAndActiveTrueAndDeletedFalse(userId);
 
         List<Map<String, Object>> notesList = new ArrayList<>();
 
@@ -73,7 +120,7 @@ public class NotesService {
 
             Notes note = mapping.getNotes();
 
-            if(note.isActive() && !note.isDeleted()) {
+            if (note.isActive() && !note.isDeleted()) {
 
                 Map<String, Object> data = new HashMap<>();
                 data.put("id", note.getId());
@@ -86,9 +133,22 @@ public class NotesService {
         return notesList;
     }
 
-    public Notes getNoteById(Long id) {
+    // Get Note by ID (with authorization check)
+    public NoteResponse getNoteById(Long id, String username) {
 
-        return notesRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Note not found"));
+        AuthUser user = authUserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        NotesUserMapping mapping = mappingRepository
+                .findByUser_IdAndNotes_IdAndActiveTrueAndDeletedFalse(user.getId(), id)
+                .orElseThrow(() -> new RuntimeException("You are not authorized to view this note"));
+
+        Notes note = mapping.getNotes();
+
+        return new NoteResponse(
+                note.getTitle(),
+                note.getDescription()
+        );
     }
 }

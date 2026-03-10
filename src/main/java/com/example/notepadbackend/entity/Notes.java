@@ -23,6 +23,8 @@ public class Notes {
     private LocalDateTime updatedDateTime;
 
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column(name = "is_starred")

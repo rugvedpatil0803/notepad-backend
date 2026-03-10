@@ -2,6 +2,7 @@ package com.example.notepadbackend.controller;
 
 import com.example.notepadbackend.dto.LoginRequest;
 import com.example.notepadbackend.dto.UserCreateRequest;
+import com.example.notepadbackend.dto.LoginResponse;
 import com.example.notepadbackend.entity.AuthUser;
 import com.example.notepadbackend.service.UserService;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AuthController {
 
     // Login API
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        return userService.loginUser(request).toString();
+    public LoginResponse login(@RequestBody LoginRequest request) {
+        return userService.loginUser(request);
     }
 }
